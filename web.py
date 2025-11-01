@@ -16,6 +16,10 @@ app = Flask(__name__)
 app.secret_key = os.getenv('SECRET_KEY', secrets.token_hex(32))
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=30)
 
+@app.after_request
+def add_ngrok_skip_header(response):
+    response.headers["ngrok-skip-browser-warning"] = "true"
+    return response
 def get_base_url():
     replit_domains = os.getenv('REPLIT_DOMAINS')
     if replit_domains:
