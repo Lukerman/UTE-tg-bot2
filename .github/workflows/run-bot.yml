@@ -1,14 +1,15 @@
 name: Run Telegram Bot
 
 on:
-  workflow_dispatch:  # allows manual start
+  workflow_dispatch:  # manual trigger
   push:
     branches:
-      - main  # optional
+      - main
 
 jobs:
   run:
     runs-on: ubuntu-latest
+    timeout-minutes: 360  # GitHub max is 6h
 
     steps:
       - name: Checkout code
@@ -17,7 +18,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.10'
+          python-version: "3.10"
 
       - name: Install dependencies
         run: |
@@ -26,9 +27,15 @@ jobs:
 
       - name: Create .env file
         run: |
+          echo "SESSION_SECRET=${{ secrets.SESSION_SECRET }}" >> .env
+          echo "ADMIN_ID=${{ secrets.ADMIN_ID }}" >> .env
+          echo "API_HASH=${{ secrets.API_HASH }}" >> .env
+          echo "API_ID=${{ secrets.API_ID }}" >> .env
           echo "BOT_TOKEN=${{ secrets.BOT_TOKEN }}" >> .env
-          echo "MONGO_URL=${{ secrets.MONGO_URL }}" >> .env
-          
+          echo "BOT_USERNAME=${{ secrets.BOT_USERNAME }}" >> .env
+          echo "MONGO_URI=${{ secrets.MONGO_URI }}" >> .env
+          echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> .env
+          echo "NGROK_AUTHTOKEN=${{ secrets.NGROK_AUTHTOKEN }}" >> .env
 
       - name: Run the bot
         run: python main.py
